@@ -1,14 +1,12 @@
-#include "subsystems/chassis.hh"
-
 #include "constants/numerical_constants.hh"
+#include "subsystems/drivetrain.hh"
 #include "units.hh"
 
 #include <algorithm>
-#include <numbers>
 
 namespace vtx {
 
-    drivetrain::drivetrain(const drivetrain_config &config) :
+    drivetrain::drivetrain(const config::drivetrain_config &config) :
     left_motors { config.motor_config.front_left_id,
                   config.motor_config.back_left_id },
     right_motors { config.motor_config.front_right_id,
@@ -29,7 +27,7 @@ namespace vtx {
                           config.drive_coefficients.i,
                           config.drive_coefficients.d } {
         imu.tare();
-        _turn_controler.setOutputLimits(-1.0, 1.0);
+        _turn_controler.set_output_limits(-1.0, 1.0);
     }
 
     auto
@@ -53,7 +51,7 @@ namespace vtx {
             - constants::half_turn;
 
         double rotational_output
-            = std::clamp(_turn_controler.getOutput(
+            = std::clamp(_turn_controler.get_output(
                              0.0,
                              units::math::abs(shortest_distance).value()),
                          -1.0,
@@ -68,13 +66,13 @@ namespace vtx {
     auto
     drivetrain::move_to_distance(units::length::meter_t distance) -> void {
         units::length::meter_t current_distance
-            = (get_left_displacement() + get_right_displacement()) / 2.0;
+            = get_side_displacement_average();
 
-        double output
-            = std::clamp(_movement_controler.getOutput(current_distance.value(),
-                                                       distance.value()),
-                         -1.0,
-                         1.0);
+        double output = std::clamp(
+            _movement_controler.get_output(current_distance.value(),
+                                           distance.value()),
+            -1.0,
+            1.0);
 
         drive(output * 127.0, 0.0);
     }
@@ -110,10 +108,15 @@ namespace vtx {
     }
 
     auto
-    drivetrain::get_side_displacement() -> units::length::meter_t {
+    drivetrain::get_strafe_displacement() -> units::length::meter_t {
         return config.physical_description.wheel_circumference
              * (static_cast<double>(this->sideways_encoder.get_value())
                 / static_cast<double>(config.physical_description.encoder_ppr));
+    }
+
+    auto
+    drivetrain::get_side_displacement_average() -> units::length::meter_t {
+        return (get_left_displacement() + get_right_displacement()) / 2.0;
     }
 
     auto

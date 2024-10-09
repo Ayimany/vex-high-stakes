@@ -3,10 +3,8 @@
 #include "constants/drivetrain_constants.hh"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
-#include "subsystems/chassis.hh"
+#include "subsystems/drivetrain.hh"
 #include "units.hh"
-
-#include <numbers>
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -95,7 +93,7 @@ opcontrol() {
 
         pros::lcd::print(2,
                          "Strafe: %f",
-                         _drivetrain.get_side_displacement().value());
+                         _drivetrain.get_strafe_displacement().value());
         pros::lcd::print(3, "vx: %d", x_velocity);
         pros::lcd::print(4, "theta: %d", angular_velocity);
 
