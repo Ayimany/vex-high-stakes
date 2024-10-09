@@ -14,14 +14,14 @@
 //**********************************
 // Constructor functions
 //**********************************
-MiniPID::MiniPID(double p, double i, double d) {
+pid_controller::pid_controller(double p, double i, double d) {
     init();
     P = p;
     I = i;
     D = d;
 }
 
-MiniPID::MiniPID(double p, double i, double d, double f) {
+pid_controller::pid_controller(double p, double i, double d, double f) {
     init();
     P = p;
     I = i;
@@ -30,7 +30,7 @@ MiniPID::MiniPID(double p, double i, double d, double f) {
 }
 
 void
-MiniPID::init() {
+pid_controller::init() {
     P = 0;
     I = 0;
     D = 0;
@@ -66,9 +66,9 @@ MiniPID::init() {
  * <b>output+=P*(setpoint-current_value)</b>
  */
 void
-MiniPID::setP(double p) {
+pid_controller::set_p(double p) {
     P = p;
-    checkSigns();
+    check_signs();
 }
 
 /**
@@ -83,7 +83,7 @@ MiniPID::setP(double p) {
  * @param i New gain value for the Integral term
  */
 void
-MiniPID::setI(double i) {
+pid_controller::set_i(double i) {
     if (I != 0) {
         errorSum = errorSum * I / i;
     }
@@ -91,7 +91,7 @@ MiniPID::setI(double i) {
         maxError = maxIOutput / i;
     }
     I = i;
-    checkSigns();
+    check_signs();
     /* Implementation note:
      * this->Scales the accumulated error to avoid output errors.
      * As an example doubling the I term cuts the accumulated error in half,
@@ -102,9 +102,9 @@ MiniPID::setI(double i) {
 }
 
 void
-MiniPID::setD(double d) {
+pid_controller::set_d(double d) {
     D = d;
-    checkSigns();
+    check_signs();
 }
 
 /**Configure the FeedForward parameter. <br>
@@ -116,9 +116,9 @@ MiniPID::setD(double d) {
  * <b>output+=F*Setpoint</b>;
  */
 void
-MiniPID::setF(double f) {
+pid_controller::set_f(double f) {
     F = f;
-    checkSigns();
+    check_signs();
 }
 
 /** Create a new PID object.
@@ -130,20 +130,20 @@ MiniPID::setF(double f) {
  * values prevents P and I terms from causing overshoot.
  */
 void
-MiniPID::setPID(double p, double i, double d) {
+pid_controller::set_pid(double p, double i, double d) {
     P = p;
     I = i;
     D = d;
-    checkSigns();
+    check_signs();
 }
 
 void
-MiniPID::setPID(double p, double i, double d, double f) {
+pid_controller::set_pid(double p, double i, double d, double f) {
     P = p;
     I = i;
     D = d;
     F = f;
-    checkSigns();
+    check_signs();
 }
 
 /**Set the maximum output value contributed by the I component of the system
@@ -151,7 +151,7 @@ MiniPID::setPID(double p, double i, double d, double f) {
  * @param maximum. Units are the same as the expected output value
  */
 void
-MiniPID::setMaxIOutput(double maximum) {
+pid_controller::set_max_i_output(double maximum) {
     /* Internally maxError and Izone are similar, but scaled for different
      * purposes. The maxError is generated for simplifying math, since
      * calculations against the max error are far more common than changing the
@@ -168,8 +168,8 @@ MiniPID::setMaxIOutput(double maximum) {
  * @param output
  */
 void
-MiniPID::setOutputLimits(double output) {
-    setOutputLimits(-output, output);
+pid_controller::set_output_limits(double output) {
+    set_output_limits(-output, output);
 }
 
 /**
@@ -178,7 +178,7 @@ MiniPID::setOutputLimits(double output) {
  * @param maximum possible output value
  */
 void
-MiniPID::setOutputLimits(double minimum, double maximum) {
+pid_controller::set_output_limits(double minimum, double maximum) {
     if (maximum < minimum)
         return;
     maxOutput = maximum;
@@ -187,7 +187,7 @@ MiniPID::setOutputLimits(double minimum, double maximum) {
     // Ensure the bounds of the I term are within the bounds of the allowable
     // output swing
     if (maxIOutput == 0 || maxIOutput > (maximum - minimum)) {
-        setMaxIOutput(maximum - minimum);
+        set_max_i_output(maximum - minimum);
     }
 }
 
@@ -195,7 +195,7 @@ MiniPID::setOutputLimits(double minimum, double maximum) {
  * @param reversed Set true to reverse PID output
  */
 void
-MiniPID::setDirection(bool reversed) {
+pid_controller::set_direction(bool reversed) {
     this->reversed = reversed;
 }
 
@@ -207,7 +207,7 @@ MiniPID::setDirection(bool reversed) {
  * @param setpoint
  */
 void
-MiniPID::setSetpoint(double setpoint) {
+pid_controller::set_setpoint(double setpoint) {
     this->setpoint = setpoint;
 }
 
@@ -218,7 +218,7 @@ MiniPID::setSetpoint(double setpoint) {
  * @return calculated output value for driving the actual to the target
  */
 double
-MiniPID::getOutput(double actual, double setpoint) {
+pid_controller::get_output(double actual, double setpoint) {
     double output;
     double Poutput;
     double Ioutput;
@@ -318,8 +318,8 @@ MiniPID::getOutput(double actual, double setpoint) {
  * @return calculated output value for driving the actual to the target
  */
 double
-MiniPID::getOutput() {
-    return getOutput(lastActual, setpoint);
+pid_controller::get_output() {
+    return get_output(lastActual, setpoint);
 }
 
 /**
@@ -328,8 +328,8 @@ MiniPID::getOutput() {
  * @return calculated output value for driving the actual to the target
  */
 double
-MiniPID::getOutput(double actual) {
-    return getOutput(actual, setpoint);
+pid_controller::get_output(double actual) {
+    return get_output(actual, setpoint);
 }
 
 /**
@@ -337,7 +337,7 @@ MiniPID::getOutput(double actual) {
  * the next loop.
  */
 void
-MiniPID::reset() {
+pid_controller::reset() {
     firstRun = true;
     errorSum = 0;
 }
@@ -346,7 +346,7 @@ MiniPID::reset() {
  * @param rate
  */
 void
-MiniPID::setOutputRampRate(double rate) {
+pid_controller::set_output_ramp_rate(double rate) {
     outputRampRate = rate;
 }
 
@@ -358,7 +358,7 @@ MiniPID::setOutputRampRate(double rate) {
  * @param range
  */
 void
-MiniPID::setSetpointRange(double range) {
+pid_controller::set_setpoint_range(double range) {
     setpointRange = range;
 }
 
@@ -370,7 +370,7 @@ MiniPID::setSetpointRange(double range) {
  * output only)
  */
 void
-MiniPID::setOutputFilter(double strength) {
+pid_controller::set_output_filter(double strength) {
     if (strength == 0 || bounded(strength, 0, 1)) {
         outputFilter = strength;
     }
@@ -388,7 +388,7 @@ MiniPID::setOutputFilter(double strength) {
  * @return Value if it's within provided range, min or max otherwise
  */
 double
-MiniPID::clamp(double value, double min, double max) {
+pid_controller::clamp(double value, double min, double max) {
     if (value > max) {
         return max;
     }
@@ -406,7 +406,7 @@ MiniPID::clamp(double value, double min, double max) {
  * @return
  */
 bool
-MiniPID::bounded(double value, double min, double max) {
+pid_controller::bounded(double value, double min, double max) {
     return (min < value) && (value < max);
 }
 
@@ -415,7 +415,7 @@ MiniPID::bounded(double value, double min, double max) {
  * with that sign depending on the {@literal}reversed value
  */
 void
-MiniPID::checkSigns() {
+pid_controller::check_signs() {
     if (reversed) { // all values should be below zero
         if (P > 0)
             P *= -1;

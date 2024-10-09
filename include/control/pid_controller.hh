@@ -1,58 +1,81 @@
 #ifndef MINIPID_H
 #define MINIPID_H
 
-#include "constants/constant_utils.hh"
+// MiniPID, courtesy of https://github.com/tekdemo/MiniPID/tree/master
 
-class MiniPID {
+class pid_controller {
 public:
-    MiniPID(double, double, double);
-    MiniPID(double, double, double, double);
+    pid_controller(double, double, double);
+
+    pid_controller(double, double, double, double);
+
     void
-    setP(double);
+    set_p(double);
+
     void
-    setI(double);
+    set_i(double);
+
     void
-    setD(double);
+    set_d(double);
+
     void
-    setF(double);
+    set_f(double);
+
     void
-    setPID(double, double, double);
+    set_pid(double, double, double);
+
     void
-    setPID(double, double, double, double);
+    set_pid(double, double, double, double);
+
     void
-    setMaxIOutput(double);
+    set_max_i_output(double);
+
     void
-    setOutputLimits(double);
+    set_output_limits(double);
+
     void
-    setOutputLimits(double, double);
+    set_output_limits(double, double);
+
     void
-    setDirection(bool);
+    set_direction(bool);
+
     void
-    setSetpoint(double);
+    set_setpoint(double);
+
     void
     reset();
+
     void
-    setOutputRampRate(double);
+    set_output_ramp_rate(double);
+
     void
-    setSetpointRange(double);
+    set_setpoint_range(double);
+
     void
-    setOutputFilter(double);
+    set_output_filter(double);
+
     double
-    getOutput();
+    get_output();
+
     double
-    getOutput(double);
+    get_output(double);
+
     double
-    getOutput(double, double);
+    get_output(double, double);
 
 private:
     double
     clamp(double, double, double);
+
     bool
     bounded(double, double, double);
+
     void
-    checkSigns();
+    check_signs();
+
     void
-           init();
+    init();
+
     double P;
     double I;
     double D;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "constants/drivetrain_constants.hh"
 #include "control/pid_controller.hh"
 #include "pros/adi.hpp"
 #include "pros/imu.hpp"
@@ -11,40 +12,9 @@
 
 namespace vtx {
 
-    struct drivetrain_config {
-        struct motor_ports {
-            std::int8_t front_right_id;
-            std::int8_t front_left_id;
-            std::int8_t back_left_id;
-            std::int8_t back_right_id;
-        };
-
-        struct encoder_ports {
-            std::pair<std::uint8_t, std::uint8_t> left_encoder_ids;
-            std::pair<std::uint8_t, std::uint8_t> right_encoder_ids;
-            std::pair<std::uint8_t, std::uint8_t> strafe_encoder_ids;
-        };
-
-        struct peripheral_ports {
-            std::uint8_t imu_port;
-        };
-
-        struct physical_measurements {
-            units::length::meter_t wheel_circumference;
-            std::int32_t           encoder_ppr;
-        };
-
-        motor_ports           motor_config;
-        encoder_ports         encoder_config;
-        peripheral_ports      peripheral_config;
-        physical_measurements physical_description;
-        pid_coefficients      turn_coefficients;
-        pid_coefficients      drive_coefficients;
-    };
-
     class drivetrain {
     public:
-        explicit drivetrain(const drivetrain_config &config);
+        explicit drivetrain(const config::drivetrain_config &config);
 
         auto
         drive(std::int32_t x_velocity, std::int32_t a_velocity) -> void;
@@ -89,10 +59,10 @@ namespace vtx {
         pros::adi::Encoder sideways_encoder;
         pros::IMU          imu;
 
-        MiniPID _turn_controler;
-        MiniPID _movement_controler;
+        pid_controller _turn_controler;
+        pid_controller _movement_controler;
 
-        const drivetrain_config &config;
+        const config::drivetrain_config &config;
     };
 
 } // namespace vtx

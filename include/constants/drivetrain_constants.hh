@@ -6,8 +6,7 @@
 #include <numbers>
 #include <utility>
 
-namespace vtx::constants {
-
+namespace vtx::config {
     /**
      * @brief A struct to hold the configuration parameters of the drivetrain in
      * a single, localized container
@@ -90,6 +89,10 @@ namespace vtx::constants {
         pid_coefficients drive_coefficients;
     };
 
+} // namespace vtx::config
+
+namespace vtx::constants {
+
     constexpr std::int8_t front_right_motor_port = 20 * NOT_INVERTED;
     constexpr std::int8_t front_left_motor_port  = 10 * INVERTED;
     constexpr std::int8_t back_left_motor_port   = 1 * INVERTED;
@@ -122,7 +125,7 @@ namespace vtx::constants {
     constexpr double drive_i = 0.0;
     constexpr double drive_d = 0.0;
 
-    constexpr drivetrain_config drivetrain_configuration {
+    constexpr config::drivetrain_config drivetrain_configuration {
         { .front_right_id = front_right_motor_port,
          .front_left_id  = front_left_motor_port,
          .back_left_id   = back_left_motor_port,
