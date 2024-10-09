@@ -1,11 +1,7 @@
 #ifndef MINIPID_H
 #define MINIPID_H
 
-struct pid_coefficients {
-    double p;
-    double i;
-    double d;
-};
+#include "constants/constant_utils.hh"
 
 class MiniPID {
 public:
