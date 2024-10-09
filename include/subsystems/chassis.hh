@@ -1,5 +1,6 @@
 #pragma once
 
+#include "control/pid_controller.hh"
 #include "pros/adi.hpp"
 #include "pros/imu.hpp"
 #include "pros/motor_group.hpp"
@@ -37,6 +38,8 @@ namespace vtx {
         encoder_ports         encoder_config;
         peripheral_ports      peripheral_config;
         physical_measurements physical_description;
+        pid_coefficients      turn_coefficients;
+        pid_coefficients      drive_coefficients;
     };
 
     class drivetrain {
@@ -45,6 +48,12 @@ namespace vtx {
 
         auto
         drive(std::int32_t x_velocity, std::int32_t a_velocity) -> void;
+
+        auto
+        turn_to_angle(units::angle::radian_t angle) -> void;
+
+        auto
+        move_to_distance(units::length::meter_t distance) -> void;
 
         [[nodiscard]]
         auto
@@ -79,6 +88,9 @@ namespace vtx {
         pros::adi::Encoder right_encoder;
         pros::adi::Encoder sideways_encoder;
         pros::IMU          imu;
+
+        MiniPID _turn_controler;
+        MiniPID _movement_controler;
 
         const drivetrain_config &config;
     };

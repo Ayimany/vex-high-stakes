@@ -4,6 +4,9 @@
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "subsystems/chassis.hh"
+#include "units.hh"
+
+#include <numbers>
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -72,7 +75,16 @@ opcontrol() {
         std::int32_t x_velocity       = master.get_analog(ANALOG_LEFT_Y);
         std::int32_t angular_velocity = -master.get_analog(ANALOG_RIGHT_X);
 
-        _drivetrain.drive(x_velocity, angular_velocity);
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) > 0) {
+            _drivetrain.turn_to_angle(units::angle::radian_t { 0 });
+        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X) > 0) {
+            _drivetrain.move_to_distance(units::length::meter_t { 1.0 });
+        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B) > 0) {
+            _drivetrain.move_to_distance(units::length::meter_t { -1.0 });
+        } else {
+            _drivetrain.drive(x_velocity, angular_velocity);
+        }
+
         pros::lcd::print(0,
                          "Left: %f m",
                          _drivetrain.get_left_displacement().value());
@@ -84,6 +96,8 @@ opcontrol() {
         pros::lcd::print(2,
                          "Strafe: %f",
                          _drivetrain.get_side_displacement().value());
+        pros::lcd::print(3, "vx: %d", x_velocity);
+        pros::lcd::print(4, "theta: %d", angular_velocity);
 
         pros::lcd::print(
             6,

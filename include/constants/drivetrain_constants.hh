@@ -31,6 +31,14 @@ namespace vtx::constants {
     constexpr units::length::meter_t wheel_circumference
         = wheel_diameter * std::numbers::pi;
 
+    constexpr double turn_p = -0.65;
+    constexpr double turn_i = 0.0;
+    constexpr double turn_d = 0.0;
+
+    constexpr double drive_p = 1.1;
+    constexpr double drive_i = 0.0;
+    constexpr double drive_d = 0.0;
+
     constexpr drivetrain_config drivetrain_configuration {
         { .front_right_id = front_right_motor_port,
          .front_left_id  = front_left_motor_port,
@@ -41,7 +49,9 @@ namespace vtx::constants {
          .strafe_encoder_ids = strafe_encoder_port },
         { .imu_port = imu_port },
         { .wheel_circumference = wheel_circumference,
-         .encoder_ppr         = encoder_ppr }
+         .encoder_ppr         = encoder_ppr },
+        { turn_p, turn_i, turn_d },
+        { drive_p, drive_i, drive_d }
     };
 
 } // namespace vtx::constants
