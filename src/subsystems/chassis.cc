@@ -42,6 +42,7 @@ namespace vtx {
 
     auto
     drivetrain::turn_to_angle(units::angle::radian_t angle) -> void {
+        // Since our turn P coefficient is negative, we must invert the angle
         angle = units::math::abs(angle - constants::half_turn);
         units::angle::radian_t heading = get_heading() - constants::half_turn;
 
